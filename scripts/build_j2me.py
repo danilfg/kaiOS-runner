@@ -88,7 +88,7 @@ def main():
         ("MicroEdition-Profile", "MIDP-2.0"),
         ("MicroEdition-Configuration", "CLDC-1.0"),
     ]
-    manifest = "\r\n".join(k + ": " + v for k, v in fields) + "\\r\\n\\r\\n"
+    manifest = "\r\n".join(k + ": " + v for k, v in fields) + "\r\n\r\n"
     with ZipFile(jar_path, "w", ZIP_DEFLATED, compresslevel=9) as z:
         z.writestr("META-INF/MANIFEST.MF", manifest.encode("ascii"))
         for f in class_files:
