@@ -1,4 +1,4 @@
-name: Build KaiOS game
+name: Build Block Frontier (KaiOS + Java ME)
 on:
   push:
     branches: [main]
@@ -7,7 +7,7 @@ on:
   pull_request:
 jobs:
   build:
-    name: Validate and package Nokia 2720 Flip
+    name: Build installable packages for Nokia 2720
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -80,8 +80,12 @@ jobs:
           body: |
             Auto-built Block Frontier for KaiOS 2.5.x and classic Java ME feature phones.
             - block-frontier-kaios.zip: WebIDE installation
-            - block-frontier-omnisd.zip: OmniSD installation, only on compatible firmware\n            - block-frontier-j2me.jar + block-frontier-j2me.jad: Java MIDP 2.0 build for Nokia 2720 Fold (2009) or installed J2ME emulator; not native to Nokia 2720 Flip (2019).
+            - block-frontier-omnisd.zip: OmniSD installation, only on compatible firmware
+            - block-frontier-j2me.jar + block-frontier-j2me.jad: Java MIDP 2.0 build for Nokia 2720 Fold (2009) or installed J2ME emulator; not native to Nokia 2720 Flip (2019).
             Build commit: ${{ github.sha }}
-          files: |\n            dist/*.zip\n            dist/*.jar\n            dist/*.jad
+          files: |
+            dist/*.zip
+            dist/*.jar
+            dist/*.jad
           fail_on_unmatched_files: true
           overwrite_files: true
