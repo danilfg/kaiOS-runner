@@ -1,0 +1,12 @@
+{
+  "name": "Block Frontier",
+  "description": "Offline 2D block-building survival sandbox for Nokia 2720 Flip.",
+  "launch_path": "/index.html",
+  "icons": {"56": "/icons/icon.svg"},
+  "developer": {"name": "danilfg", "url": "https://github.com/danilfg/kaiOS-runner"},
+  "default_locale": "en",
+  "type": "web",
+  "version": "0.1.0",
+  "fullscreen": true,
+  "orientation": "portrait"
+}
