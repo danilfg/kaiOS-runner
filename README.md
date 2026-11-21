@@ -41,8 +41,8 @@ In menus `2/8` change selection and `5` confirms. When selecting a world slot, p
 1. Open the [Actions](https://github.com/danilfg/kaiOS-runner/actions/workflows/build.yml) tab.
 2. Choose **Build KaiOS game** → **Run workflow** (or open the latest green run on `main`).
 3. In the run details, download the **block-frontier-nokia-2720** artifact.
-4. Unzip the downloaded GitHub **artifact**; inside is **`block-frontier-kaios.zip`**. This *inner ZIP* is the KaiOS application. It has `manifest.webapp` at its root.
-5. A `v*` git tag additionally publishes the same ZIP under GitHub Releases.
+4. Unzip the downloaded GitHub **artifact**; inside are **`block-frontier-kaios.zip`** (WebIDE, manifest at root) and **`block-frontier-omnisd.zip`** (OmniSD/Wallace package with nested application.zip + metadata.json + update.webapp).
+5. A `v*` git tag additionally publishes both ZIPs under GitHub Releases.
 
 Do **not** rename this file to `.apk`, `.ipa`, `.jar` or `.jad`: KaiOS uses packaged HTML5 applications, not those formats.
 
@@ -61,7 +61,7 @@ Do **not** rename this file to `.apk`, `.ipa`, `.jar` or `.jad`: KaiOS uses pack
 
 ### Alternative: compatible OmniSD loader
 
-If OmniSD is already installed and supported by your firmware, transfer `block-frontier-kaios.zip` to the phone's storage and install using the package manager. **Do not attempt unverified jailbreak steps.** See [BananaHackers' OmniSD documentation](https://wiki.bananahackers.net/guides/omnisd) for compatibility.
+If OmniSD is **already installed** and supported by the firmware, transfer **`block-frontier-omnisd.zip`** to the Nokia's `/downloads` or `/apps` directory (e.g. via a microSD card), rescan in OmniSD, then install the ZIP without extracting it. The WebIDE ZIP is **not** an OmniSD package. On KaiOS **2.5.2.2+**, OmniSD's import API was removed, so this method no longer works. An iPhone cannot perform the first sideload directly. **Do not attempt unverified jailbreak steps.** See [BananaHackers' OmniSD documentation](https://wiki.bananahackers.net/guides/omnisd) for compatibility.
 
 ### Development locally
 
