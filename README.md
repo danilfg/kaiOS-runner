@@ -1,5 +1,7 @@
 # Block Frontier — Nokia 2720 Flip (KaiOS 2.5)
 
+📖 [Русская инструкция по установке на Nokia 2720](INSTALL_RU.md)
+
 **Standalone, offline, single-player 2D block sandbox** made for the Nokia 2720 Flip keypad and 240 × 320 screen. It is NOT a 3D voxel engine or an Android/iOS game.
 
 ## Features
