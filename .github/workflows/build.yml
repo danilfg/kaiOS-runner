@@ -18,6 +18,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Set up Java for real J2ME MIDlet compilation
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
       - name: Validate source
         run: |
           node --check src/game.js
@@ -32,13 +37,38 @@ jobs:
           test "$(unzip -Z -1 dist/block-frontier-kaios.zip | grep -c '^manifest.webapp$')" -eq 1
           test "$(unzip -Z -1 dist/block-frontier-omnisd.zip | grep -c '^application.zip$')" -eq 1
           ls -lh dist/
+      - name: Compile Java ME MIDlet (Nokia 2720 Fold / compatible J2ME emulator)
+        run: |
+          python3 scripts/build_j2me.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile
+          jar = Path('dist/block-frontier-j2me.jar')
+          jad = Path('dist/block-frontier-j2me.jad')
+          assert jar.is_file() and jad.is_file()
+          with zipfile.ZipFile(jar) as z:
+              manifest = z.read('META-INF/MANIFEST.MF').decode('ascii')
+              assert 'MIDlet-1: Block Frontier' in manifest
+              assert 'MicroEdition-Profile: MIDP-2.0' in manifest
+              classes = [n for n in z.namelist() if n.endswith('.class')]
+              assert classes, 'No MIDlet classes in JAR'
+              for path in classes:
+                  b = z.read(path)
+                  assert b[0:4] == bytes((0xca,0xfe,0xba,0xbe))
+                  assert int.from_bytes(b[6:8], 'big') == 45
+          assert ('MIDlet-Jar-Size: '+str(jar.stat().st_size)) in jad.read_text()
+          print('J2ME JAR/JAD validation OK')
+          PY
       - name: Upload KaiOS installation packages
         uses: actions/upload-artifact@v4
         with:
           name: block-frontier-nokia-2720
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/*.jar
+            dist/*.jad
           if-no-files-found: error
-      - name: Publish downloadable ZIPs to GitHub Releases
+      - name: Publish downloadable KaiOS ZIP and J2ME JAR/JAD to GitHub Releases
         if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
         uses: softprops/action-gh-release@v2
         with:
@@ -48,10 +78,10 @@ jobs:
           prerelease: ${{ github.ref == 'refs/heads/main' }}
           generate_release_notes: false
           body: |
-            Auto-built Block Frontier for Nokia 2720 Flip (KaiOS 2.5.x).
+            Auto-built Block Frontier for KaiOS 2.5.x and classic Java ME feature phones.
             - block-frontier-kaios.zip: WebIDE installation
-            - block-frontier-omnisd.zip: OmniSD installation, only on compatible firmware
+            - block-frontier-omnisd.zip: OmniSD installation, only on compatible firmware\n            - block-frontier-j2me.jar + block-frontier-j2me.jad: Java MIDP 2.0 build for Nokia 2720 Fold (2009) or installed J2ME emulator; not native to Nokia 2720 Flip (2019).
             Build commit: ${{ github.sha }}
-          files: dist/*.zip
+          files: |\n            dist/*.zip\n            dist/*.jar\n            dist/*.jad
           fail_on_unmatched_files: true
           overwrite_files: true
