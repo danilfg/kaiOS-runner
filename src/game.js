@@ -12,7 +12,7 @@ var hardness = [0,1,1,2,2,1,1,1,2,3,3,1,1,2,1,1,1];
 var key = {}, screen = 'home', choice = 0, slotChoice = 0, slotAction = 'load', desiredMode = 'survival';
 var world = null, player = null, mobs = [], selected = 0, target = 0, editCount = 0;
 var menuTab = 0, menuIndex = 0, day = 0, toast = '', toastEnd = 0, lastMove = 0, lastGravity = 0, lastMob = 0, lastSave = 0, lastFrame = 0;
-var camX = 0, camY = 0, powered = {}, confirmDelete = -1, rawCache = {}, rawCount = 0;
+var camX = 0, camY = 0, powered = {}, confirmDelete = -1, rawCache = {}, rawCount = 0, lastRender = 0;
 var recipes = [
  {n:'Planks x4',need:[[4,1]],get:[11,4]},
  {n:'Wood pick',need:[[4,2]],tool:1},
@@ -126,8 +126,8 @@ window.addEventListener('blur',function(){key={};save();});document.addEventList
 function aim(){var x=player.x+player.face,y=player.y+1;if(target===1){x=player.x;y=player.y-2;}else if(target===2){x=player.x;y=player.y+1;}return{x:x,y:y};}
 function mine(){var pos=aim(),t=id(pos.x,pos.y),i;
  if(!t&&target===0){pos.y--;t=id(pos.x,pos.y);}
- if(!t){notice('Nothing to mine');return;}
  for(i=0;i<mobs.length;i++){if(Math.abs(mobs[i].x-player.x)<2){mobs.splice(i,1);world.score+=10;notice('Mob defeated');return;}}
+ if(!t){notice('Nothing to mine');return;}
  if(world.mode==='survival'&&hardness[t]>(world.tool===0?1:world.tool+1)){notice('Craft a stronger pick');return;}
  if(setId(pos.x,pos.y,0)){
   if(t===1)give(2,1);else if(t===7)give(7,1);else give(t,1);
@@ -251,7 +251,7 @@ function drawInventory(){rect(0,0,240,320,'#152b3d');drawText(menuTab===0?'CRAFT
  drawText('2/8 Scroll • 5 Craft/Select',120,300,10,'#fff1c5','center');drawText('* Close',120,315,10,'#cfdfed','center');}
 function drawPause(){gameScene();rect(0,24,240,246,'rgba(8,22,30,.94)');drawText('PAUSED',120,59,22,'#f1e8ba','center');button('RESUME',84,choice===0);button('SAVE WORLD',118,choice===1);button('MODE: '+world.mode.toUpperCase(),152,choice===2);button('MAIN MENU',186,choice===3);drawText('2/8 Select  5 Confirm',120,243,10,'#cfe6ed','center');}
 function drawControls(){rect(0,0,240,320,'#163047');drawText('CONTROLS',120,32,20,'#c5edbc','center');var lines=['4 / 6   Walk left / right','2         Jump / fly up','0         Eat / fly down','8         Mine block','5         Place selected block','1 / 3   Previous / next block','9         Aim front / up / down','7         Toggle switch / rest','*         Craft and inventory','#         Pause and save','Autosave every 6 seconds','Offline • Single-player'];for(var i=0;i<lines.length;i++)drawText(lines[i],15,60+i*20,11,'#e6edf6');drawText('5 / Back to menu',120,314,10,'#ffdf9b','center');}
-function frame(now){if(!now)now=Date.now();if(!lastFrame)lastFrame=now;var previous=lastFrame;if(screen==='play'&&world){update(now);}else lastFrame=now;
+function frame(){var now=Date.now();if(lastRender&&now-lastRender<48){window.requestAnimationFrame(frame);return;}lastRender=now;if(!lastFrame)lastFrame=now;if(screen==='play'&&world){update(now);}else lastFrame=now;
  if(screen==='home')drawHome();else if(screen==='slots')drawSlots();else if(screen==='controls')drawControls();else if(screen==='inventory')drawInventory();else if(screen==='pause')drawPause();else if(screen==='play')gameScene();
  if(window.requestAnimationFrame)window.requestAnimationFrame(frame);else setTimeout(function(){frame(Date.now());},50);
 }
